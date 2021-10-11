@@ -78,6 +78,14 @@ function getPostByCategory($cat_id)
     return $postList;
 
 }
+function getPostByAuthor($post_author)
+{
+    global $connection;
+    $query = "SELECT * FROM posts WHERE post_author = '$post_author'";
+    $postList = mysqli_query($connection, $query);
+    return $postList;
+
+}
 
 function addPost($post_category_id, $post_title, $post_author, $post_user,
                  $post_date, $post_status, $post_image, $post_tags,
