@@ -7,16 +7,36 @@
 <?php
 
 $search = "";
+$post_per_page = 2;
+$totalPostCount = getRowCount('posts');
 if (isset($_POST['submit'])) {
     $search = $_POST['search'];
-
+    if (!empty($search)) {
+        $totalPostCount = getCustomPostListCount($search);
+    }
 }
+if (isset($_GET['search'])) {
+    $search = $_GET['search'];
+    if (!empty($search)) {
+        $totalPostCount = getCustomPostListCount($search);
+    }
+}
+
 if (isset($_GET['cat_id'])) {
     $post_category_id = $_GET['cat_id'];
+    $totalPostCount = getPostByCategoryCount($post_category_id);
 }
 if (isset($_GET['post_author'])) {
     $post_author = $_GET['post_author'];
+    $totalPostCount = getPostByAuthorCount($post_author);
 }
+$totalPages = ceil($totalPostCount / $post_per_page);
+if (isset($_GET['page_number'])) {
+    $page_number = $_GET['page_number'];
+} else {
+    $page_number = 1;
+}
+$post_index = ($page_number - 1) * $post_per_page;
 ?>
 <?php include "includes/navigation.php" ?>
     <!-- Page Content -->
@@ -34,13 +54,13 @@ if (isset($_GET['post_author'])) {
             <?php
 
             if (strlen($search) != 0) {
-                $postList = getCustomPostList($search);
+                $postList = getCustomPostList($search, $post_index, $post_per_page);
             } elseif (isset($_GET['cat_id'])) {
-                $postList = getPostByCategory($post_category_id);
+                $postList = getPostByCategory($post_category_id, $post_index, $post_per_page);
             } elseif (isset($_GET['post_author'])) {
-                $postList = getPostByAuthor($post_author);
+                $postList = getPostByAuthor($post_author, $post_index, $post_per_page);
             } else {
-                $postList = getPostList();
+                $postList = getPostListForUser($post_index, $post_per_page);
             }
             $count = mysqli_num_rows($postList);
             if ($count == 0) {
@@ -86,5 +106,26 @@ if (isset($_GET['post_author'])) {
     <!-- /.row -->
 
     <hr>
+    <ul class="pager">
+        <?php
+        for ($i = 1; $i <= $totalPages; $i++) {
+            if ($page_number == $i) {
+                $active = 'active_link';
+            } else {
+                $active = '';
+            }
+            if (isset($_GET['cat_id'])) {
+                echo "<li class='{$active}'><a href='index.php?page_number={$i}&amp;cat_id={$post_category_id}'>$i</a></li>";
+            } else if (isset($_GET['post_author'])) {
+                echo "<li class='{$active}'><a href='index.php?page_number={$i}&amp;post_author={$post_author}'>$i</a></li>";
+            } else if (!empty($search)) {
+                echo "<li class='{$active}'><a href='index.php?page_number={$i}&amp;search={$search}'>$i</a></li>";
+            } else {
+                echo "<li class='{$active}'><a href='index.php?page_number={$i}'>$i</a></li>";
+            }
+
+        }
+        ?>
+    </ul>
 
 <?php include "includes/footer.php" ?>

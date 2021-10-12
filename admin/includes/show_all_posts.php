@@ -57,7 +57,7 @@ if (isset($_POST['post_id_list'])) {
         </thead>
         <tbody>
         <?php
-        $postList = getPostList();
+        $postList = getPostListForAdmin();
         $count = mysqli_num_rows($postList);
         if ($count == 0) {
             echo "NO POST AVAILABLE";

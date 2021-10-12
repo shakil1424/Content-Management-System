@@ -42,24 +42,55 @@ function updateCategory($cat_id, $cat_title)
     }
 }
 
-function getPostList()
+function getPostListForUser($post_index, $post_per_page)
 {
     global $connection;
     $query = "SELECT * FROM posts JOIN categories ON ";
     $query .= "posts.post_category_id = categories.cat_id ";
-    $query .= "ORDER BY posts.post_id DESC";
+    $query .= "ORDER BY posts.post_id DESC ";
+    $query .= "LIMIT $post_index,$post_per_page";
+    $postList = mysqli_query($connection, $query);
+    if (!$postList) {
+        die ("get post list is failed " . mysqli_error($connection));
+    } else {
+        return $postList;
+    }
+
+}
+
+function getPostListForAdmin()
+{
+    global $connection;
+    $query = "SELECT * FROM posts JOIN categories ON ";
+    $query .= "posts.post_category_id = categories.cat_id ";
+    $query .= "ORDER BY posts.post_id DESC ";
+    $postList = mysqli_query($connection, $query);
+    if (!$postList) {
+        die ("get post list is failed " . mysqli_error($connection));
+    } else {
+        return $postList;
+    }
+
+}
+
+function getCustomPostList($search,$post_index, $post_per_page)
+{
+    global $connection;
+    $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search%' ";
+    $query .= "LIMIT $post_index,$post_per_page";
     $postList = mysqli_query($connection, $query);
     return $postList;
 
 }
-
-function getCustomPostList($search)
+function getCustomPostListCount($search)
 {
     global $connection;
     $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search%'";
-    $postList = mysqli_query($connection, $query);
-    return $postList;
-
+    $result = mysqli_query($connection, $query);
+    if (!$result) {
+        die ("User Update is failed " . mysqli_error($connection));
+    }
+    return mysqli_num_rows($result);
 }
 
 function getSinglePost($post_id)
@@ -71,21 +102,39 @@ function getSinglePost($post_id)
 
 }
 
-function getPostByCategory($cat_id)
+function getPostByCategory($cat_id,$post_index, $post_per_page)
 {
     global $connection;
-    $query = "SELECT * FROM posts WHERE post_category_id = '$cat_id'";
+    $query = "SELECT * FROM posts WHERE post_category_id = '$cat_id' ";
+    $query .= "LIMIT $post_index,$post_per_page";
     $postList = mysqli_query($connection, $query);
     return $postList;
 
 }
-
-function getPostByAuthor($post_author)
+function getPostByCategoryCount($cat_id)
 {
     global $connection;
-    $query = "SELECT * FROM posts WHERE post_author = '$post_author'";
+    $query = "SELECT * FROM posts WHERE post_category_id = '$cat_id'";
+    $postList = mysqli_query($connection, $query);
+    return mysqli_num_rows($postList);
+
+}
+
+function getPostByAuthor($post_author,$post_index, $post_per_page)
+{
+    global $connection;
+    $query = "SELECT * FROM posts WHERE post_author = '$post_author' ";
+    $query .= "LIMIT $post_index,$post_per_page";
     $postList = mysqli_query($connection, $query);
     return $postList;
+
+}
+function getPostByAuthorCount($cat_id)
+{
+    global $connection;
+    $query = "SELECT * FROM posts WHERE post_category_id = '$cat_id'";
+    $postList = mysqli_query($connection, $query);
+    return mysqli_num_rows($postList);
 
 }
 
