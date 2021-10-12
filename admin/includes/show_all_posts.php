@@ -1,15 +1,18 @@
 <?php include_once "../includes/functions.php" ?>
 <?php
-if (isset($_POST['checkBoxArray'])) {
-    foreach ($_POST['checkBoxArray'] as $checkBoxValue) {
+if (isset($_POST['post_id_list'])) {
+    foreach ($_POST['post_id_list'] as $post_id) {
         $bulk_options = $_POST['bulk_options'];
         switch ($bulk_options) {
             case 'draft':
             case 'published':
-                changePostStatus($checkBoxValue, $bulk_options);
+                changePostStatus($post_id, $bulk_options);
                 break;
             case 'delete':
-                deletePost($checkBoxValue);
+                deletePost($post_id);
+                break;
+            case 'clone':
+                clonePost($post_id);
                 break;
         }
 
@@ -22,10 +25,11 @@ if (isset($_POST['checkBoxArray'])) {
 <form action="" method="post">
 
 
-    <table class="table table-bordered text-center">
+    <table class="table table-bordered text-center table-condensed table-responsive">
         <div id="bulkOptionContainer" class="col-xs-4">
             <select class="form-control" name="bulk_options" id="">
                 <option value="">Select Options</option>
+                <option value="clone">Clone</option>
                 <option value="published">Publish</option>
                 <option value="draft">Draft</option>
                 <option value="delete">Delete</option>
@@ -46,6 +50,7 @@ if (isset($_POST['checkBoxArray'])) {
             <th class="text-center">Date</th>
             <th class="text-center">Image</th>
             <th class="text-center">Tags</th>
+            <th class="text-center">Views</th>
             <th class="text-center">Comments</th>
             <th class="text-center">Actions</th>
         </tr>
@@ -70,9 +75,10 @@ if (isset($_POST['checkBoxArray'])) {
                 $post_status = $post['post_status'];
                 $post_image = $post['post_image'];
                 $post_comment_count = $post['post_comment_count'];
+                $post_view_count = $post['post_view_count'];
                 echo "<tr>";
                 ?>
-                <td><input class="checkBoxes" type="checkbox" name="checkBoxArray[]" value="<?php echo $post_id ?>">
+                <td><input class="checkBoxes" type="checkbox" name="post_id_list[]" value="<?php echo $post_id ?>">
                 </td>
                 <?php
                 echo "<td>{$post_id}</td>
@@ -83,6 +89,9 @@ if (isset($_POST['checkBoxArray'])) {
                       <td>{$post_date}</td>
                       <td><img width='50' src='images/{$post_image}'></td>
                       <td>{$post_tags}</td>
+                      <td>{$post_view_count}&nbsp;&nbsp;
+                      <a onClick=\"javascript: return confirm('Are you sure you want to reset views?');\" class='btn btn-xs btn-info' href='posts.php?reset_view={$post_id}'>RESET</a>
+                      </td>
                       <td>{$post_comment_count}</td>
                       <td>
                       <div class='btn-group' role='action' aria-label='post_action'>
@@ -100,6 +109,11 @@ if (isset($_POST['checkBoxArray'])) {
         if (isset($_GET['delete'])) {
             $post_id = $_GET['delete'];
             deletePost($post_id);
+            header("Location: posts.php");
+        }
+        if (isset($_GET['reset_view'])) {
+            $post_id = $_GET['reset_view'];
+            resetPostViewCount($post_id);
             header("Location: posts.php");
         }
         ?>

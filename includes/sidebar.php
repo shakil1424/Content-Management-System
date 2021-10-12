@@ -6,7 +6,7 @@
 
     <div class="well">
         <h4>Blog Search</h4>
-        <form action="" method="post">
+        <form action="index.php" method="post">
             <div class="input-group">
                 <input name="search" type="text" class="form-control">
                 <span class="input-group-btn">
@@ -23,7 +23,7 @@
     <!-- login form -->
 
     <div class="well">
-        <h4>Blog Search</h4>
+        <h4>Login</h4>
         <form action="includes/login.php" method="post">
             <div class="form-group">
                 <input type="text" name="user_name" class="form-control" placeholder="Enter Username">

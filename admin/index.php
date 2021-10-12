@@ -41,7 +41,7 @@
                 <?php
                 $postCount = getRowCount("posts");
                 $publishedPostCount = getPublishedPostCount();
-                $draftPostCount = $postCount-$publishedPostCount;
+                $draftPostCount = $postCount - $publishedPostCount;
                 $commentCount = getRowCount("comments");
                 $approvedCommentCount = getApprovedCommentCount();
                 $newCommentCount = $commentCount - $approvedCommentCount;
@@ -155,36 +155,26 @@
                                 ["Data", "Count", {role: "style"}],
                                 <?php
 
-                                $elementText = ["Total Post","Published Post", "Draft Post",
-                                                "Total Comment", "Approved Comment", "new Comment",
-                                                "Total User", "Admin", "Subscriber",
-                                                "Category"];
-                                $elementCount = [$postCount,$publishedPostCount,$draftPostCount,
-                                                $commentCount,$approvedCommentCount,$newCommentCount,
-                                                $userCount,$adminCount,$subscriberCount,
-                                                $categoryCount];
+                                $elementText = ["Total Post", "Published Post", "Draft Post",
+                                    "Total Comment", "Approved Comment", "new Comment",
+                                    "Total User", "Admin", "Subscriber",
+                                    "Category"];
+                                $elementCount = [$postCount, $publishedPostCount, $draftPostCount,
+                                    $commentCount, $approvedCommentCount, $newCommentCount,
+                                    $userCount, $adminCount, $subscriberCount,
+                                    $categoryCount];
 
                                 $elementColor = ["#6621e5", "#3d578b", "#6495ED",
-                                                "#d5671f","#CD5C5C", "#DC143C",
-                                                "#0a8d3d","#008B8B", "#7FFFD4",
-                                                "#E9967A" ];
-                                    for($i = 0;$i<9;$i++){
-                                        echo "['{$elementText[$i]}'".","."{$elementCount[$i]}".","."'{$elementColor[$i]}'],";
+                                    "#d5671f", "#CD5C5C", "#DC143C",
+                                    "#0a8d3d", "#008B8B", "#7FFFD4",
+                                    "#ad32db"];
+                                for ($i = 0; $i < 10; $i++) {
+                                    echo "['{$elementText[$i]}'" . "," . "{$elementCount[$i]}" . "," . "'{$elementColor[$i]}'],";
 
-                                    }
+                                }
 
-                                    ?>
-
-                                /*["Total Post", 15, "#6621e5"],
-                                ["Published Post", 10, "#3d578b"],
-                                ["Draft Post", 5, "#6495ED"],
-                                ["Total Comment", 5, "#d5671f"],
-                                ["Published Comment", 5, "#CD5C5C"],
-                                ["New Comment", 5, "#DC143C"],
-                                ["Total User", 4, "#0a8d3d"],
-                                ["Admin", 4, "#008B8B"],
-                                ["Subscriber", 3, "#7FFFD4"],
-                                ["Categories", 2, "#E9967A"]*/
+                                ?>
+                                 //colorCheck = "#ad32db";
 
                             ]);
 

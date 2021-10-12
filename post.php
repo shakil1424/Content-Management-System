@@ -13,6 +13,10 @@ if (isset($_POST['submit'])) {
 }
 if (isset($_GET['post_id'])) {
     $post_id = $_GET['post_id'];
+    increasePostViewCount($post_id);
+}
+else{
+    header("Location: index.php");
 }
 
 ?>

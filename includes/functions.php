@@ -46,7 +46,8 @@ function getPostList()
 {
     global $connection;
     $query = "SELECT * FROM posts JOIN categories ON ";
-    $query .= "posts.post_category_id = categories.cat_id";
+    $query .= "posts.post_category_id = categories.cat_id ";
+    $query .= "ORDER BY posts.post_id DESC";
     $postList = mysqli_query($connection, $query);
     return $postList;
 
@@ -78,6 +79,7 @@ function getPostByCategory($cat_id)
     return $postList;
 
 }
+
 function getPostByAuthor($post_author)
 {
     global $connection;
@@ -103,8 +105,7 @@ function addPost($post_category_id, $post_title, $post_author, $post_user,
     $result = mysqli_query($connection, $query);
     if (!$result) {
         die ("Insert comment is failed " . mysqli_error($connection));
-    }
-    else{
+    } else {
         return mysqli_insert_id($connection);
     }
 
@@ -133,7 +134,9 @@ function updatePost($post_id, $post_category_id, $post_title, $post_author,
     }
 
 }
-function changePostStatus($post_id,$status){
+
+function changePostStatus($post_id, $status)
+{
     global $connection;
     $query = "UPDATE posts SET post_status = '$status' ";
     $query .= "WHERE post_id = '$post_id'";
@@ -163,6 +166,48 @@ function changePostCommentCount($comment_post_id, $value)
     if (!$result) {
         die ("update comment_count is failed " . mysqli_error($connection));
     }
+}
+
+function increasePostViewCount($post_id)
+{
+    global $connection;
+    $query = "UPDATE posts SET post_view_count = post_view_count + 1 ";
+    $query .= "WHERE post_id = '$post_id'";
+    $result = mysqli_query($connection, $query);
+    if (!$result) {
+        die ("increase post_view_count is failed " . mysqli_error($connection));
+    }
+}
+
+function resetPostViewCount($post_id)
+{
+    global $connection;
+    $query = "UPDATE posts SET post_view_count = 0 ";
+    $query .= "WHERE post_id = '$post_id'";
+    $result = mysqli_query($connection, $query);
+    if (!$result) {
+        die ("reset post_view_count is failed " . mysqli_error($connection));
+    }
+}
+
+function clonePost($post_id)
+{
+    $postList = getSinglePost($post_id);
+    while ($post = $postList->fetch_assoc()) {
+        $post_category_id = $post['post_category_id'];
+        $post_title = $post['post_title'];
+        $post_author = $post['post_author'];
+        $post_user = $post['post_user'];
+        $post_date = $post['post_date'];
+        $post_tags = $post['post_tags'];
+        $post_status = $post['post_status'];
+        $post_image = $post['post_image'];
+        $post_content = $post['post_content'];
+    }
+    addPost($post_category_id, $post_title, $post_author, $post_user,
+        $post_date, $post_status, $post_image, $post_tags,
+        $post_content);
+
 }
 
 function getCommentList()
@@ -242,7 +287,7 @@ function addUser($user_firstname, $user_lastname, $user_role, $user_name,
     }
     $row = mysqli_fetch_array($result);
     $salt = $row['randSalt'];
-    $user_password = crypt($user_password,$salt);
+    $user_password = crypt($user_password, $salt);
     $query = "INSERT INTO users (user_name,user_password,user_firstname,user_lastname,user_email,user_image,user_role) ";
     $query .= "VALUES ('$user_name','$user_password','$user_firstname','$user_lastname','$user_email','$user_image','$user_role')";
     $result = mysqli_query($connection, $query);
@@ -251,11 +296,13 @@ function addUser($user_firstname, $user_lastname, $user_role, $user_name,
     }
 
 }
-function registerUser($user_name,$user_password,$user_email){
+
+function registerUser($user_name, $user_password, $user_email)
+{
     global $connection;
-    $user_name = mysqli_real_escape_string($connection,$user_name);
-    $user_password = mysqli_real_escape_string($connection,$user_password);
-    $user_email = mysqli_real_escape_string($connection,$user_email);
+    $user_name = mysqli_real_escape_string($connection, $user_name);
+    $user_password = mysqli_real_escape_string($connection, $user_password);
+    $user_email = mysqli_real_escape_string($connection, $user_email);
 
     $query = "SELECT randSalt FROM users";
     $result = mysqli_query($connection, $query);
@@ -264,7 +311,7 @@ function registerUser($user_name,$user_password,$user_email){
     }
     $row = mysqli_fetch_array($result);
     $salt = $row['randSalt'];
-    $user_password = crypt($user_password,$salt);
+    $user_password = crypt($user_password, $salt);
 
     $query = "INSERT INTO users (user_name,user_password,user_email,user_role) ";
     $query .= "VALUES ('$user_name','$user_password','$user_email','subscriber')";
@@ -272,7 +319,6 @@ function registerUser($user_name,$user_password,$user_email){
     if (!$result) {
         die ("Registration is failed " . mysqli_error($connection));
     }
-
 
 
 }
@@ -296,7 +342,7 @@ function updateUser($user_id, $user_firstname, $user_lastname, $user_role,
     }
     $row = mysqli_fetch_array($result);
     $salt = $row['randSalt'];
-    $user_password = crypt($user_password,$salt);
+    $user_password = crypt($user_password, $salt);
     $query = "UPDATE users SET  
             user_firstname = '$user_firstname',
             user_lastname = '$user_lastname',
@@ -312,7 +358,9 @@ function updateUser($user_id, $user_firstname, $user_lastname, $user_role,
         die ("update comment is failed " . mysqli_error($connection));
     }
 }
-function deleteUser($user_id){
+
+function deleteUser($user_id)
+{
     global $connection;
     $query = "DELETE FROM users WHERE user_id = '$user_id'";
     $result = mysqli_query($connection, $query);
@@ -321,7 +369,8 @@ function deleteUser($user_id){
     }
 }
 
-function changeUserRole($user_id,$changed_role){
+function changeUserRole($user_id, $changed_role)
+{
     global $connection;
     $query = "UPDATE users SET user_role = '$changed_role' ";
     $query .= "WHERE user_id  = '$user_id'";
@@ -330,10 +379,12 @@ function changeUserRole($user_id,$changed_role){
         die ("User Update is failed " . mysqli_error($connection));
     }
 }
-function getLoginUser($user_name,$user_password){
+
+function getLoginUser($user_name, $user_password)
+{
     global $connection;
-    $user_name = mysqli_real_escape_string($connection,$user_name);
-    $user_password = mysqli_real_escape_string($connection,$user_password);
+    $user_name = mysqli_real_escape_string($connection, $user_name);
+    $user_password = mysqli_real_escape_string($connection, $user_password);
     $query = "SELECT randSalt FROM users";
     $result = mysqli_query($connection, $query);
     if (!$result) {
@@ -341,51 +392,56 @@ function getLoginUser($user_name,$user_password){
     }
     $row = mysqli_fetch_array($result);
     $salt = $row['randSalt'];
-    $user_password = crypt($user_password,$salt);
+    $user_password = crypt($user_password, $salt);
     $query = "SELECT * FROM users WHERE user_name = '$user_name' AND user_password = '$user_password'";
     $userList = mysqli_query($connection, $query);
     if (!$userList) {
         die ("User Update is failed " . mysqli_error($connection));
-    }else{
+    } else {
         return $userList;
     }
 
 }
-function getRowCount($tableName){
+
+function getRowCount($tableName)
+{
     global $connection;
-    $query = "SELECT * FROM ".$tableName;
+    $query = "SELECT * FROM " . $tableName;
     $result = mysqli_query($connection, $query);
-    if(!$result){
+    if (!$result) {
         die ("Table row count is failed " . mysqli_error($connection));
     }
     return mysqli_num_rows($result);
 }
+
 function getPublishedPostCount()
 {
     global $connection;
     $query = "SELECT * FROM posts WHERE post_status = 'published'";
     $result = mysqli_query($connection, $query);
-    if(!$result){
+    if (!$result) {
         die ("User Update is failed " . mysqli_error($connection));
     }
     return mysqli_num_rows($result);
 }
+
 function getApprovedCommentCount()
 {
     global $connection;
     $query = "SELECT * FROM comments WHERE comment_status = '1'";
     $result = mysqli_query($connection, $query);
-    if(!$result){
+    if (!$result) {
         die ("User Update is failed " . mysqli_error($connection));
     }
     return mysqli_num_rows($result);
 }
+
 function getAdminCount()
 {
     global $connection;
     $query = "SELECT * FROM users WHERE user_role = 'admin'";
     $result = mysqli_query($connection, $query);
-    if(!$result){
+    if (!$result) {
         die ("User Update is failed " . mysqli_error($connection));
     }
     return mysqli_num_rows($result);
