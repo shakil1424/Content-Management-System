@@ -39,7 +39,7 @@ if (isset($_POST['create_user'])) {
     $user_name = $_POST['user_name'];
     $user_password = $_POST['user_password'];
     $user_email = $_POST['user_email'];
-
+    $user_password = password_hash($user_password,PASSWORD_BCRYPT, array('cost'=>12));
     $user_image = $_FILES['image']['name'];
     $user_image_temp = $_FILES['image']['tmp_name'];
     move_uploaded_file($user_image_temp, "images/$user_image");
@@ -58,6 +58,7 @@ if (isset($_POST['update_user'])) {
     $user_image_temp = $_FILES['image']['tmp_name'];
     $user_email = $_POST['user_email'];
     $user_password = $_POST['user_password'];
+    $user_password = password_hash($user_password,PASSWORD_BCRYPT, array('cost'=>12));
 
     move_uploaded_file($user_image_temp, "images/$user_image");
     if (empty($user_image)) {

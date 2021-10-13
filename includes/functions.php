@@ -73,7 +73,7 @@ function getPostListForAdmin()
 
 }
 
-function getCustomPostList($search,$post_index, $post_per_page)
+function getCustomPostList($search, $post_index, $post_per_page)
 {
     global $connection;
     $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search%' ";
@@ -82,6 +82,7 @@ function getCustomPostList($search,$post_index, $post_per_page)
     return $postList;
 
 }
+
 function getCustomPostListCount($search)
 {
     global $connection;
@@ -102,7 +103,7 @@ function getSinglePost($post_id)
 
 }
 
-function getPostByCategory($cat_id,$post_index, $post_per_page)
+function getPostByCategory($cat_id, $post_index, $post_per_page)
 {
     global $connection;
     $query = "SELECT * FROM posts WHERE post_category_id = '$cat_id' ";
@@ -111,6 +112,7 @@ function getPostByCategory($cat_id,$post_index, $post_per_page)
     return $postList;
 
 }
+
 function getPostByCategoryCount($cat_id)
 {
     global $connection;
@@ -120,7 +122,7 @@ function getPostByCategoryCount($cat_id)
 
 }
 
-function getPostByAuthor($post_author,$post_index, $post_per_page)
+function getPostByAuthor($post_author, $post_index, $post_per_page)
 {
     global $connection;
     $query = "SELECT * FROM posts WHERE post_author = '$post_author' ";
@@ -129,6 +131,7 @@ function getPostByAuthor($post_author,$post_index, $post_per_page)
     return $postList;
 
 }
+
 function getPostByAuthorCount($cat_id)
 {
     global $connection;
@@ -329,14 +332,6 @@ function addUser($user_firstname, $user_lastname, $user_role, $user_name,
                  $user_password, $user_email, $user_image)
 {
     global $connection;
-    $query = "SELECT randSalt FROM users";
-    $result = mysqli_query($connection, $query);
-    if (!$result) {
-        die ("Salting is failed " . mysqli_error($connection));
-    }
-    $row = mysqli_fetch_array($result);
-    $salt = $row['randSalt'];
-    $user_password = crypt($user_password, $salt);
     $query = "INSERT INTO users (user_name,user_password,user_firstname,user_lastname,user_email,user_image,user_role) ";
     $query .= "VALUES ('$user_name','$user_password','$user_firstname','$user_lastname','$user_email','$user_image','$user_role')";
     $result = mysqli_query($connection, $query);
@@ -352,16 +347,7 @@ function registerUser($user_name, $user_password, $user_email)
     $user_name = mysqli_real_escape_string($connection, $user_name);
     $user_password = mysqli_real_escape_string($connection, $user_password);
     $user_email = mysqli_real_escape_string($connection, $user_email);
-
-    $query = "SELECT randSalt FROM users";
-    $result = mysqli_query($connection, $query);
-    if (!$result) {
-        die ("Salting is failed " . mysqli_error($connection));
-    }
-    $row = mysqli_fetch_array($result);
-    $salt = $row['randSalt'];
-    $user_password = crypt($user_password, $salt);
-
+    $user_password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
     $query = "INSERT INTO users (user_name,user_password,user_email,user_role) ";
     $query .= "VALUES ('$user_name','$user_password','$user_email','subscriber')";
     $result = mysqli_query($connection, $query);
@@ -384,14 +370,6 @@ function updateUser($user_id, $user_firstname, $user_lastname, $user_role,
                     $user_image, $user_name, $user_email, $user_password)
 {
     global $connection;
-    $query = "SELECT randSalt FROM users";
-    $result = mysqli_query($connection, $query);
-    if (!$result) {
-        die ("Salting is failed " . mysqli_error($connection));
-    }
-    $row = mysqli_fetch_array($result);
-    $salt = $row['randSalt'];
-    $user_password = crypt($user_password, $salt);
     $query = "UPDATE users SET  
             user_firstname = '$user_firstname',
             user_lastname = '$user_lastname',
@@ -429,23 +407,15 @@ function changeUserRole($user_id, $changed_role)
     }
 }
 
-function getLoginUser($user_name, $user_password)
+function getLoginUser($user_name)
 {
     global $connection;
     $user_name = mysqli_real_escape_string($connection, $user_name);
-    $user_password = mysqli_real_escape_string($connection, $user_password);
-    $query = "SELECT randSalt FROM users";
-    $result = mysqli_query($connection, $query);
-    if (!$result) {
-        die ("Salting is failed " . mysqli_error($connection));
-    }
-    $row = mysqli_fetch_array($result);
-    $salt = $row['randSalt'];
-    $user_password = crypt($user_password, $salt);
-    $query = "SELECT * FROM users WHERE user_name = '$user_name' AND user_password = '$user_password'";
+
+    $query = "SELECT * FROM users WHERE user_name = '$user_name'";
     $userList = mysqli_query($connection, $query);
     if (!$userList) {
-        die ("User Update is failed " . mysqli_error($connection));
+        die ("login query is failed " . mysqli_error($connection));
     } else {
         return $userList;
     }

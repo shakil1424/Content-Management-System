@@ -53,9 +53,17 @@
     ?>
     <?php
     if (isset($_GET['delete'])) {
-        $user_id = $_GET['delete'];
-        deleteUser($user_id);
-        header("Location: users.php");
+        if (isset($_GET['delete'])) {
+            if(isset($_SESSION['user_role'])){
+                if(isset($_SESSION['user_role'])=="admin"){
+                    $user_id = $_GET['delete'];
+                    deleteUser($user_id);
+                    header("Location: users.php");
+                }
+            }
+
+        }
+
     }
     if (isset($_GET['user_role'])) {
         $user_id = $_GET['user_id'];

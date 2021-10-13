@@ -6,7 +6,7 @@ if (isset($_POST['login'])) {
     $login_user_name = $_POST['user_name'];
     $login_user_password = $_POST['user_password'];
 
-    $userList = getLoginUser($login_user_name, $login_user_password);
+    $userList = getLoginUser($login_user_name);
 
     $count = mysqli_num_rows($userList);
 
@@ -23,14 +23,15 @@ if (isset($_POST['login'])) {
             $user_image = $user['user_image'];
             $user_role = $user['user_role'];
         }
-        /*if($user_name===$login_user_name && $user_password === $login_user_password){*/
-        $_SESSION['user_name'] = $user_name;
-        $_SESSION['user_id'] = $user_id;
-        $_SESSION['user_firstname'] = $user_firstname;
-        $_SESSION['user_lastname'] = $user_lastname;
-        $_SESSION['user_role'] = $user_role;
-        //$_SESSION['user_image'] = $user_image;
-        header("Location: ../admin");
+        if (password_verify($login_user_password, $user_password)) {
+            $_SESSION['user_name'] = $user_name;
+            $_SESSION['user_id'] = $user_id;
+            $_SESSION['user_firstname'] = $user_firstname;
+            $_SESSION['user_lastname'] = $user_lastname;
+            $_SESSION['user_role'] = $user_role;
+
+            header("Location: ../admin");
+        }
     }
 }
 ?>

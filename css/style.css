@@ -4,6 +4,6 @@
  * For details, see http://www.apache.org/licenses/LICENSE-2.0.
  */
 
-.pager li .active_link{
+.pager li.active_link{
    background: #a11a1a !important;
 }

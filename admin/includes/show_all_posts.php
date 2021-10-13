@@ -107,9 +107,14 @@ if (isset($_POST['post_id_list'])) {
         ?>
         <?php
         if (isset($_GET['delete'])) {
-            $post_id = $_GET['delete'];
-            deletePost($post_id);
-            header("Location: posts.php");
+            if(isset($_SESSION['user_role'])){
+                if(isset($_SESSION['user_role'])=="admin"){
+                    $post_id = $_GET['delete'];
+                    deletePost($post_id);
+                    header("Location: posts.php");
+                }
+            }
+
         }
         if (isset($_GET['reset_view'])) {
             $post_id = $_GET['reset_view'];
