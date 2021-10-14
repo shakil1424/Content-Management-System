@@ -8,7 +8,7 @@
 
 $search = "";
 $post_per_page = 2;
-$totalPostCount = getRowCount('posts');
+$totalPostCount = getPublishedPostCount();
 if (isset($_POST['submit'])) {
     $search = $_POST['search'];
     if (!empty($search)) {

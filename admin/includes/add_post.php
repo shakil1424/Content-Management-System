@@ -49,7 +49,7 @@ if (isset($_POST['create_post'])) {
         $post_date, $post_status, $post_image, $post_tags,
         $post_content);
     echo "<p class='bg-success'>Post Added.&nbsp;<a href='../post.php?post_id={$latest_post_id}'>View Post</a>&nbsp;or&nbsp;
-        <a href='posts.php'>Edit More Post</a></p>";
+        <a href='posts.php'>See All Post</a></p>";
     /*header("Location: posts.php");*/
 
 }

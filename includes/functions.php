@@ -8,6 +8,23 @@ function getCategoryList()
     $categoryList = mysqli_query($connection, $query);
     return $categoryList;
 
+
+}
+
+function getCategoryList2()
+{
+    global $connection;
+    $query = "SELECT * FROM categories";
+    /*$categoryList = mysqli_query($connection, $query);
+    return $categoryList;*/
+
+    $stmt = $connection->prepare($query);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $categoryList = $result->fetch_all(MYSQLI_ASSOC);
+    return $categoryList;
+
+
 }
 
 function addCategory($cat_title)
@@ -47,6 +64,7 @@ function getPostListForUser($post_index, $post_per_page)
     global $connection;
     $query = "SELECT * FROM posts JOIN categories ON ";
     $query .= "posts.post_category_id = categories.cat_id ";
+    $query .= "WHERE post_status = 'published' ";
     $query .= "ORDER BY posts.post_id DESC ";
     $query .= "LIMIT $post_index,$post_per_page";
     $postList = mysqli_query($connection, $query);
@@ -77,6 +95,7 @@ function getCustomPostList($search, $post_index, $post_per_page)
 {
     global $connection;
     $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search%' ";
+    $query .= "AND post_status = 'published' ";
     $query .= "LIMIT $post_index,$post_per_page";
     $postList = mysqli_query($connection, $query);
     return $postList;
@@ -86,7 +105,8 @@ function getCustomPostList($search, $post_index, $post_per_page)
 function getCustomPostListCount($search)
 {
     global $connection;
-    $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search%'";
+    $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search%' ";
+    $query .= "AND post_status = 'published' ";
     $result = mysqli_query($connection, $query);
     if (!$result) {
         die ("User Update is failed " . mysqli_error($connection));
@@ -107,6 +127,7 @@ function getPostByCategory($cat_id, $post_index, $post_per_page)
 {
     global $connection;
     $query = "SELECT * FROM posts WHERE post_category_id = '$cat_id' ";
+    $query .= "AND post_status = 'published' ";
     $query .= "LIMIT $post_index,$post_per_page";
     $postList = mysqli_query($connection, $query);
     return $postList;
@@ -116,7 +137,8 @@ function getPostByCategory($cat_id, $post_index, $post_per_page)
 function getPostByCategoryCount($cat_id)
 {
     global $connection;
-    $query = "SELECT * FROM posts WHERE post_category_id = '$cat_id'";
+    $query = "SELECT * FROM posts WHERE post_category_id = '$cat_id' ";
+    $query .= "AND post_status = 'published' ";
     $postList = mysqli_query($connection, $query);
     return mysqli_num_rows($postList);
 
@@ -126,6 +148,7 @@ function getPostByAuthor($post_author, $post_index, $post_per_page)
 {
     global $connection;
     $query = "SELECT * FROM posts WHERE post_author = '$post_author' ";
+    $query .= "AND post_status = 'published' ";
     $query .= "LIMIT $post_index,$post_per_page";
     $postList = mysqli_query($connection, $query);
     return $postList;
@@ -135,7 +158,8 @@ function getPostByAuthor($post_author, $post_index, $post_per_page)
 function getPostByAuthorCount($cat_id)
 {
     global $connection;
-    $query = "SELECT * FROM posts WHERE post_category_id = '$cat_id'";
+    $query = "SELECT * FROM posts WHERE post_category_id = '$cat_id' ";
+    $query .= "AND post_status = 'published' ";
     $postList = mysqli_query($connection, $query);
     return mysqli_num_rows($postList);
 
