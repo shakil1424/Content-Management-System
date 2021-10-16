@@ -1,4 +1,6 @@
-<?php include_once "../includes/functions.php" ?>
+<?php include_once "../includes/functions_mysqli.php" ?>
+<?php include_once "../includes/functions_pdo.php" ?>
+<?php include_once "../includes/db_pdo.php" ?>
 <?php
 $buttonName = "Publish post";
 $value = '';
@@ -17,17 +19,15 @@ if (isset($_GET['post_id'])) {
     $buttonName = "Update Post";
     $actionName = "update_post";
     $value = "checking update";
-    $postList = getSinglePost($post_id);
-    while ($post = $postList->fetch_assoc()) {
-        $post_title = $post['post_title'];
-        $post_author = $post['post_author'];
-        $post_category_id = $post['post_category_id'];
-        $post_content = $post['post_content'];
-        $post_tags = $post['post_tags'];
-        $post_status = $post['post_status'];
-        $post_image = $post['post_image'];
-        $post_comment_count = $post['post_comment_count'];
-    }
+    $post = getSinglePostPdo($post_id, $pdo);
+    $post_title = $post['post_title'];
+    $post_author = $post['post_author'];
+    $post_category_id = $post['post_category_id'];
+    $post_content = $post['post_content'];
+    $post_tags = $post['post_tags'];
+    $post_status = $post['post_status'];
+    $post_image = $post['post_image'];
+    $post_comment_count = $post['post_comment_count'];
 
 }
 if (isset($_POST['create_post'])) {
@@ -45,9 +45,8 @@ if (isset($_POST['create_post'])) {
     $post_date = date('Y-m-d');
 
     move_uploaded_file($post_image_temp, "images/$post_image");
-    $latest_post_id = addPost($post_category_id, $post_title, $post_author, $post_user,
-        $post_date, $post_status, $post_image, $post_tags,
-        $post_content);
+    $latest_post_id = addPostPdo($post_category_id, $post_title, $post_author, $post_user,
+        $post_date, $post_status, $post_image, $post_tags,$post_content, $pdo);
     echo "<p class='bg-success'>Post Added.&nbsp;<a href='../post.php?post_id={$latest_post_id}'>View Post</a>&nbsp;or&nbsp;
         <a href='posts.php'>See All Post</a></p>";
     /*header("Location: posts.php");*/
@@ -71,9 +70,9 @@ if (isset($_POST['update_post'])) {
     if (empty($post_image)) {
         $post_image = $_POST['old_post_image'];
     }
-    updatePost($post_id, $post_category_id, $post_title, $post_author,
+    updatePostPdo($post_id, $post_category_id, $post_title, $post_author,
         $post_date, $post_status, $post_image, $post_tags,
-        $post_content);
+        $post_content,$pdo);
     echo "<p class='bg-success'>Post Updated.&nbsp;<a href='../post.php?post_id={$post_id}'>View Post</a>&nbsp;or&nbsp;
         <a href='posts.php'>Edit More Post</a></p>";
     //header("Location: posts.php");
@@ -90,8 +89,8 @@ if (isset($_POST['update_post'])) {
         <label for="category_id">Select Category</label>
         <select class="form-control" name="post_category_id" id="">
             <?php
-            $categoryList = getCategoryList();
-            while ($category = $categoryList->fetch_assoc()) {
+            $categoryList = getCategoryListPdo($pdo);
+            foreach ($categoryList as $category) {
                 $cat_id = $category['cat_id'];
                 $cat_title = $category['cat_title'];
                 if (isset($_GET['post_id']) && $cat_id == $post_category_id) {

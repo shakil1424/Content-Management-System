@@ -1,6 +1,8 @@
 <?php  include "includes/db.php"; ?>
  <?php  include "includes/header.php"; ?>
- <?php  include_once "includes/functions.php"; ?>
+ <?php  include_once "includes/functions_mysqli.php"; ?>
+ <?php  include_once "includes/functions_pdo.php"; ?>
+ <?php  include_once "includes/db_pdo.php"; ?>
 
 
     <!-- Navigation -->
@@ -15,7 +17,7 @@
      $user_email = $_POST['user_email'];
      $user_password = $_POST['user_password'];
      if(!empty($user_name)&&!empty($user_email)&&!empty($user_password)){
-         registerUser($user_name,$user_password,$user_email);
+         registerUserPdo($user_name,$user_password,$user_email,$pdo);
          $message = "Registration Completed";
 
      }

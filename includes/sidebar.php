@@ -1,4 +1,6 @@
-<?php include_once "functions.php" ?>
+<?php include_once "includes/db_pdo.php" ?>
+<?php include_once "includes/functions_mysqli.php" ?>
+<?php include_once "includes/functions_pdo.php" ?>
 
 <div class="col-md-4">
 
@@ -48,8 +50,8 @@
             <div class="col-lg-6">
                 <ul class="list-unstyled">
                     <?php
-                    $categoryList = getCategoryList();
-                    while ($category = $categoryList->fetch_assoc()) {
+                    $categoryList = getCategoryListPdo($pdo);
+                    foreach ($categoryList as $category) {
                         $cat_id = $category['cat_id'];
                         $cat_title = $category['cat_title'];
                         echo "

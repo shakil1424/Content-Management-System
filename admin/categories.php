@@ -1,5 +1,7 @@
 <?php include "includes/admin_header.php" ?>
-<?php include_once "../includes/functions.php" ?>
+<?php include_once "../includes/functions_mysqli.php" ?>
+<?php include_once "../includes/functions_pdo.php" ?>
+<?php include_once "../includes/db_pdo.php" ?>
 
     <div id="wrapper">
 
@@ -22,9 +24,9 @@
                         <div class="col-xs-6">
                             <!--Add Category form-->
                             <?php
-                            if(isset($_POST['addCategory'])){
+                            if (isset($_POST['addCategory'])) {
                                 $cat_title = $_POST['cat_title'];
-                                addCategory($cat_title);
+                                addCategoryPdo($cat_title,$pdo);
                             }
                             ?>
                             <form action="" method="post">
@@ -42,21 +44,23 @@
                             <?php
                             $hidden = "hidden";
                             $cat_title = "";
-                            if(isset($_GET['updateid'])){
+                            if (isset($_GET['updateid'])) {
                                 $cat_id = $_GET['updateid'];
                                 $cat_title = $_GET['updatetitle'];
-                                $hidden="";
+                                $hidden = "";
                                 //header("Location: categories.php");
 
                             }
 
                             ?>
 
-                            <form action="" method="post" <?php echo $hidden;?>>
+                            <form action="" method="post" <?php echo $hidden; ?>>
                                 <div class="form-group">
                                     <label for="">Update Category</label>
-                                    <input class="form-control" type="text" name="cat_title" value="<?php echo $cat_title?>">
-                                    <input class="form-control" type="hidden" name="cat_id" value="<?php echo $cat_id?>">
+                                    <input class="form-control" type="text" name="cat_title"
+                                           value="<?php echo $cat_title ?>">
+                                    <input class="form-control" type="hidden" name="cat_id"
+                                           value="<?php echo $cat_id ?>">
                                 </div>
                                 <div class="form-group">
                                     <input class="form-control btn btn-primary" type="submit" name="updateCategory"
@@ -64,10 +68,10 @@
                                 </div>
                             </form>
                             <?php
-                            if(isset($_POST['updateCategory'])){
-                                $cat_id= $_POST['cat_id'];
+                            if (isset($_POST['updateCategory'])) {
+                                $cat_id = $_POST['cat_id'];
                                 $cat_title = $_POST['cat_title'];
-                                updateCategory($cat_id,$cat_title);
+                                updateCategoryPdo($cat_id, $cat_title,$pdo);
                                 header("Location: categories.php");
                             }
                             ?>
@@ -77,7 +81,7 @@
 
                         <div class="col-xs-6">
                             <label>Categories</label>
-                            <table class=" table table-bordered table-hover text-center" >
+                            <table class=" table table-bordered table-hover text-center">
                                 <thead>
                                 <th class="text-center">Id</th>
                                 <th class="text-center">Category Title</th>
@@ -85,8 +89,12 @@
                                 </thead>
                                 <tbody>
                                 <?php
-                                $categoryList = getCategoryList();
-                                while ($category = $categoryList->fetch_assoc()) {
+                                //without prepared statement
+                                /*$categoryList = getCategoryList();
+                                while ($category = $categoryList->fetch_assoc()) {*/
+                                //with prepared statement
+                                $categoryList = getCategoryListPdo($pdo);
+                                foreach ($categoryList as $category) {
                                     $cat_id = $category['cat_id'];
                                     $cat_title = $category['cat_title'];
                                     echo "<tr>
@@ -98,9 +106,9 @@
                                 }
                                 ?>
                                 <?php
-                                if(isset($_GET['delete'])){
+                                if (isset($_GET['delete'])) {
                                     $cat_id = $_GET['delete'];
-                                    deleteCategory($cat_id);
+                                    deleteCategoryPdo($cat_id,$pdo);
                                     header("Location: categories.php");
                                 }
                                 ?>

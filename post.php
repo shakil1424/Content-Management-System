@@ -1,11 +1,12 @@
 <?php include_once "includes/db.php" ?>
 <?php include "includes/header.php" ?>
-<?php include_once "includes/functions.php" ?>
+<?php include_once "includes/functions_mysqli.php" ?>
+<?php include_once "includes/functions_pdo.php" ?>
 
 
     <!-- Navigation -->
 <?php
-$user_role="";
+$user_role = "";
 $visibility = "true";
 if (isset($_SESSION['user_role'])) {
     $user_role = $_SESSION['user_role'];
@@ -17,7 +18,7 @@ if (isset($_POST['submit'])) {
 }
 if (isset($_GET['post_id'])) {
     $post_id = $_GET['post_id'];
-    increasePostViewCount($post_id);
+
 } else {
     header("Location: index.php");
 }
@@ -39,29 +40,26 @@ if (isset($_GET['post_id'])) {
 
 
             <?php
+            $post = getSinglePostPdo($post_id, $pdo);
+            $post_id = $post['post_id'];
+            $post_title = $post['post_title'];
+            $post_author = $post['post_author'];
+            $post_date = $post['post_date'];
+            $post_content = $post['post_content'];
+            $post_tags = $post['post_tags'];
+            $post_status = $post['post_status'];
+            $post_image = $post['post_image'];
+
+            if ($post_status == "draft" && $user_role != "admin") {
+                $visibility = false;
+            }
 
 
-            $postList = getSinglePost($post_id);
-
-            while ($post = $postList->fetch_assoc()) {
-                $post_id = $post['post_id'];
-                $post_title = $post['post_title'];
-                $post_author = $post['post_author'];
-                $post_date = $post['post_date'];
-                $post_content = $post['post_content'];
-                $post_tags = $post['post_tags'];
-                $post_status = $post['post_status'];
-                $post_image = $post['post_image'];
-
-                if($post_status == "draft" && $user_role!="admin" ){
-                    $visibility = false;
-                }
+            if ($visibility == "true") {
+                increasePostViewCountPdo($post_id,$pdo); ?>
 
 
-                if ($visibility=="true"){ ?>
-
-
-                        <h2>
+                <h2>
                     <a href="post.php?post_id=<?php echo $post_id; ?>"><?php echo $post_title ?></a>
                 </h2>
                 <p class="lead">
@@ -84,9 +82,9 @@ if (isset($_GET['post_id'])) {
                     $comment_content = $_POST['comment_content'];
                     $comment_date = date('Y-m-d');
                     if (!empty($comment_author) && !empty($comment_email) && !empty($comment_content)) {
-                        addComment($comment_post_id, $comment_author, $comment_email,
-                            $comment_content, $comment_date);
-                        changePostCommentCount($comment_post_id, 1);
+                        addCommentPdo($comment_post_id, $comment_author, $comment_email,
+                            $comment_content, $comment_date,$pdo);
+                        changePostCommentCountPdo($comment_post_id, 1, $pdo);
                         header("Location: post.php?post_id={$comment_post_id}");
                     } else {
                         echo "<script>alert('Fields can not be left empty!!')</script>";
@@ -123,8 +121,8 @@ if (isset($_GET['post_id'])) {
 
                 <!-- Comment -->
                 <?php
-                $commentList = getCommentListByPost($post_id);
-                while ($comment = $commentList->fetch_assoc()) {
+                $commentList = getCommentListByPostPdo($post_id, $pdo);
+                foreach ($commentList as $comment) {
                     $post_author = $comment['comment_author'];
                     $post_date = $comment['comment_date'];
                     $post_content = $comment['comment_content'];
@@ -141,15 +139,14 @@ if (isset($_GET['post_id'])) {
                         </div>
                     </div>
 
-                    <?php }}
-            else{
+                <?php }
+            } else {
                 echo "No post is available";
-            }}?>
+            }
+            ?>
 
 
-
-
-                <!-- First Blog Post -->
+            <!-- First Blog Post -->
 
 
             <!-- End Nested Comment -->

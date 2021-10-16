@@ -1,6 +1,8 @@
-<?php include "includes/db.php" ?>
 <?php include "includes/header.php" ?>
-<?php include_once "includes/functions.php" ?>
+<?php include "includes/db.php" ?>
+<?php include_once "includes/db_pdo.php" ?>
+<?php include_once "includes/functions_mysqli.php" ?>
+<?php include_once "includes/functions_pdo.php" ?>
 
 
     <!-- Navigation -->
@@ -8,27 +10,28 @@
 
 $search = "";
 $post_per_page = 2;
-$totalPostCount = getPublishedPostCount();
+$totalPostCount = getPublishedPostCountPdo($pdo);
 if (isset($_POST['submit'])) {
     $search = $_POST['search'];
     if (!empty($search)) {
-        $totalPostCount = getCustomPostListCount($search);
+        $totalPostCount = getCustomPostListCountPdo($search,$pdo);
+        echo $totalPostCount;
     }
 }
 if (isset($_GET['search'])) {
     $search = $_GET['search'];
     if (!empty($search)) {
-        $totalPostCount = getCustomPostListCount($search);
+        $totalPostCount = getCustomPostListCountPdo($search,$pdo);
     }
 }
 
 if (isset($_GET['cat_id'])) {
     $post_category_id = $_GET['cat_id'];
-    $totalPostCount = getPostByCategoryCount($post_category_id);
+    $totalPostCount = getPostByCategoryCountPdo($post_category_id, $pdo);
 }
 if (isset($_GET['post_author'])) {
     $post_author = $_GET['post_author'];
-    $totalPostCount = getPostByAuthorCount($post_author);
+    $totalPostCount = getPostByAuthorCountPdo($post_author, $pdo);
 }
 $totalPages = ceil($totalPostCount / $post_per_page);
 if (isset($_GET['page_number'])) {
@@ -54,20 +57,20 @@ $post_index = ($page_number - 1) * $post_per_page;
             <?php
 
             if (strlen($search) != 0) {
-                $postList = getCustomPostList($search, $post_index, $post_per_page);
+                $postList = getCustomPostListPdo($search, $post_index, $post_per_page, $pdo);
             } elseif (isset($_GET['cat_id'])) {
-                $postList = getPostByCategory($post_category_id, $post_index, $post_per_page);
+                $postList = getPostByCategoryPdo($post_category_id, $post_index, $post_per_page, $pdo);
             } elseif (isset($_GET['post_author'])) {
-                $postList = getPostByAuthor($post_author, $post_index, $post_per_page);
+                $postList = getPostByAuthorPdo($post_author, $post_index, $post_per_page,$pdo);
             } else {
-                $postList = getPostListForUser($post_index, $post_per_page);
+                $postList = getPostListForUserPdo($post_index, $post_per_page, $pdo);
             }
-            $count = mysqli_num_rows($postList);
+            $count = count($postList);
             if ($count == 0) {
                 echo "NO POST AVAILABLE";
 
             } else {
-                while ($post = $postList->fetch_assoc()) {
+                foreach ($postList as $post) {
                     $post_id = $post['post_id'];
                     $post_title = $post['post_title'];
                     $post_author = $post['post_author'];

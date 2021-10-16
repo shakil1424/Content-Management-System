@@ -1,6 +1,7 @@
 <?php include "includes/admin_header.php" ?>
-<?php include_once "../includes/functions.php" ?>
-
+<?php include_once "../includes/functions_mysqli.php" ?>
+<?php include_once "../includes/functions_pdo.php" ?>
+<?php include_once "../includes/db_pdo.php" ?>
 <?php
 if (isset($_SESSION['user_name'])) {
     echo $_SESSION['user_name'];
@@ -49,18 +50,14 @@ if (isset($_SESSION['user_name'])) {
                     if (isset($_SESSION['user_name'])) {
 
                         $user_id = $_SESSION['user_id'];
-
-                        $userList = getSingleUser($user_id);
-                        while ($user = $userList->fetch_assoc()) {
-                            $user_firstname = $user['user_firstname'];
-                            $user_name = $user['user_name'];
-                            $user_lastname = $user['user_lastname'];
-                            $user_password = $user['user_password'];
-                            $user_email = $user['user_email'];
-                            $user_role = $user['user_role'];
-                            $user_image = $user['user_image'];
-                        }
-
+                        $user = getSingleUserPdo($user_id, $pdo);
+                        $user_firstname = $user['user_firstname'];
+                        $user_name = $user['user_name'];
+                        $user_lastname = $user['user_lastname'];
+                        $user_password = $user['user_password'];
+                        $user_email = $user['user_email'];
+                        $user_role = $user['user_role'];
+                        $user_image = $user['user_image'];
                     }
 
                     if (isset($_POST['update_user'])) {
@@ -79,8 +76,8 @@ if (isset($_SESSION['user_name'])) {
                         if (empty($user_image)) {
                             $user_image = $_POST['old_user_image'];
                         }
-                        updateUser($user_id, $user_firstname, $user_lastname, $user_role,
-                            $user_image, $user_name, $user_email, $user_password);
+                        updateUserPdo($user_id, $user_firstname, $user_lastname, $user_role,
+                            $user_image, $user_name, $user_email, $user_password, $pdo);
                         header("Location: profile.php");
                     }
                     ?>

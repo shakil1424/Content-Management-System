@@ -1,5 +1,5 @@
 <?php include "includes/admin_header.php" ?>
-<?php include_once "../includes/functions.php" ?>
+<?php include_once "../includes/functions_mysqli.php" ?>
 
     <div id="wrapper">
 
@@ -16,21 +16,13 @@
                     <div class="col-lg-12">
                         <h1 class="page-header">
                             USERS PAGE
-                            <small>Author</small>
                         </h1>
-                        <!-- <ol class="breadcrumb">
-                             <li>
-                                 <i class="fa fa-dashboard"></i>  <a href="index.php">Dashboard</a>
-                             </li>
-                             <li class="active">
-                                 <i class="fa fa-file"></i> Blank Page
-                             </li>
-                         </ol>-->
+
                         <?php
                         if (isset($_GET['source'])) {
                             $source = $_GET['source'];
-                        }else{
-                            $source='';
+                        } else {
+                            $source = '';
                         }
                         switch ($source) {
                             case 'add_user':

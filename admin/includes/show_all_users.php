@@ -1,10 +1,11 @@
-<?php include_once "../includes/functions.php" ?>
+<?php include_once "../includes/functions_mysqli.php" ?>
+<?php include_once "../includes/functions_pdo.php" ?>
+<?php include_once "../includes/db_pdo.php" ?>
 <table class="table table-bordered text-center">
     <thead>
     <tr>
         <th class="text-center">Id</th>
-        <th class="text-center">Name</th>
-        <th class="text-center">Password</th>
+        <th class="text-center">Username</th>
         <th class="text-center">First Name</th>
         <th class="text-center">Last Name</th>
         <th class="text-center">Email</th>
@@ -16,13 +17,13 @@
     </thead>
     <tbody>
     <?php
-    $userList = getuserList();
-    $count = mysqli_num_rows($userList);
+    $userList = getuserListPdo($pdo);
+    $count = count($userList);
     if ($count == 0) {
         echo "NO user AVAILABLE";
 
     } else {
-        while ($user = $userList->fetch_assoc()) {
+        foreach ($userList as $user) {
             $user_id = $user['user_id'];
             $user_name = $user['user_name'];
             $user_password = $user['user_password'];
@@ -37,7 +38,6 @@
                   <tr>
                       <td>{$user_id}</td>
                       <td>{$user_name}</td>
-                      <td>{$user_password}</td>
                       <td>{$user_firstname}</td>
                       <td>{$user_lastname}</td>
                       <td>{$user_email}</td>
@@ -54,10 +54,10 @@
     <?php
     if (isset($_GET['delete'])) {
         if (isset($_GET['delete'])) {
-            if(isset($_SESSION['user_role'])){
-                if(isset($_SESSION['user_role'])=="admin"){
+            if (isset($_SESSION['user_role'])) {
+                if (isset($_SESSION['user_role']) == "admin") {
                     $user_id = $_GET['delete'];
-                    deleteUser($user_id);
+                    deleteUserPdo($user_id, $pdo);
                     header("Location: users.php");
                 }
             }
@@ -69,10 +69,10 @@
         $user_id = $_GET['user_id'];
         $user_role = $_GET['user_role'];
         $changed_role = "admin";
-        if($user_role == "admin"){
+        if ($user_role == "admin") {
             $changed_role = "subscriber";
         }
-        changeUserRole($user_id,$changed_role);
+        changeUserRolePdo($user_id, $changed_role,$pdo);
         header("Location: users.php");
     }
     ?>

@@ -1,5 +1,7 @@
 <?php include "includes/admin_header.php" ?>
-<?php include "../includes/functions.php" ?>
+<?php include_once "../includes/db_pdo.php" ?>
+<?php include "../includes/functions_mysqli.php" ?>
+<?php include "../includes/functions_pdo.php" ?>
 
 
     <div id="wrapper">
@@ -39,16 +41,16 @@
 
                 <!-- /.row -->
                 <?php
-                $postCount = getRowCount("posts");
-                $publishedPostCount = getPublishedPostCount();
+                $postCount = getRowCountPdo("posts",$pdo);
+                $publishedPostCount = getPublishedPostCountPdo($pdo);
                 $draftPostCount = $postCount - $publishedPostCount;
-                $commentCount = getRowCount("comments");
-                $approvedCommentCount = getApprovedCommentCount();
+                $commentCount = getRowCountPdo("comments",$pdo);
+                $approvedCommentCount = getApprovedCommentCountPdo($pdo);
                 $newCommentCount = $commentCount - $approvedCommentCount;
-                $userCount = getRowCount("users");
-                $adminCount = getAdminCount();
+                $userCount = getRowCountPdo("users",$pdo);
+                $adminCount = getAdminCountPdo($pdo);
                 $subscriberCount = $userCount - $adminCount;
-                $categoryCount = getRowCount("categories");
+                $categoryCount = getRowCountPdo("categories",$pdo);
 
                 ?>
 

@@ -1,4 +1,6 @@
-<?php include_once "../includes/functions.php" ?>
+<?php include_once "../includes/functions_mysqli.php" ?>
+<?php include_once "../includes/functions_pdo.php" ?>
+<?php include_once "../includes/db_pdo.php" ?>
 <?php
 if (isset($_POST['post_id_list'])) {
     foreach ($_POST['post_id_list'] as $post_id) {
@@ -6,13 +8,13 @@ if (isset($_POST['post_id_list'])) {
         switch ($bulk_options) {
             case 'draft':
             case 'published':
-                changePostStatus($post_id, $bulk_options);
+                changePostStatusPdo($post_id, $bulk_options,$pdo);
                 break;
             case 'delete':
-                deletePost($post_id);
+                deletePostPdo($post_id,$pdo);
                 break;
             case 'clone':
-                clonePost($post_id);
+                clonePostPdo($post_id, $pdo);
                 break;
         }
 
@@ -57,13 +59,13 @@ if (isset($_POST['post_id_list'])) {
         </thead>
         <tbody>
         <?php
-        $postList = getPostListForAdmin();
-        $count = mysqli_num_rows($postList);
+        $postList = getPostListForAdminPdo($pdo);
+        $count = count($postList);
         if ($count == 0) {
             echo "NO POST AVAILABLE";
 
         } else {
-            while ($post = $postList->fetch_assoc()) {
+            foreach ($postList as $post) {
                 $post_id = $post['post_id'];
                 $post_title = $post['post_title'];
                 $post_author = $post['post_author'];
@@ -110,7 +112,7 @@ if (isset($_POST['post_id_list'])) {
             if(isset($_SESSION['user_role'])){
                 if(isset($_SESSION['user_role'])=="admin"){
                     $post_id = $_GET['delete'];
-                    deletePost($post_id);
+                    deletePostPdo($post_id,$pdo);
                     header("Location: posts.php");
                 }
             }
@@ -118,7 +120,7 @@ if (isset($_POST['post_id_list'])) {
         }
         if (isset($_GET['reset_view'])) {
             $post_id = $_GET['reset_view'];
-            resetPostViewCount($post_id);
+            resetPostViewCountPdo($post_id, $pdo);
             header("Location: posts.php");
         }
         ?>

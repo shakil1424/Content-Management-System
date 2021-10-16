@@ -352,6 +352,13 @@ function getuserList()
     return $userList;
 }
 
+function getSingleUser($user_id)
+{
+    global $connection;
+    $query = "SELECT * FROM users WHERE user_id = '$user_id'";
+    $userList = mysqli_query($connection, $query);
+    return $userList;
+}
 function addUser($user_firstname, $user_lastname, $user_role, $user_name,
                  $user_password, $user_email, $user_image)
 {
@@ -382,13 +389,7 @@ function registerUser($user_name, $user_password, $user_email)
 
 }
 
-function getSingleUser($user_id)
-{
-    global $connection;
-    $query = "SELECT * FROM users WHERE user_id = '$user_id'";
-    $userList = mysqli_query($connection, $query);
-    return $userList;
-}
+
 
 function updateUser($user_id, $user_firstname, $user_lastname, $user_role,
                     $user_image, $user_name, $user_email, $user_password)
@@ -435,7 +436,6 @@ function getLoginUser($user_name)
 {
     global $connection;
     $user_name = mysqli_real_escape_string($connection, $user_name);
-
     $query = "SELECT * FROM users WHERE user_name = '$user_name'";
     $userList = mysqli_query($connection, $query);
     if (!$userList) {

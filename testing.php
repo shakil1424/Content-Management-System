@@ -19,11 +19,8 @@ for($i = 0;$i<9;$i++){
 }*/
 
 //$element[] ="";
-for ($i = 1 ; $i<4 ; $i++){
-    $element[] = $i;
-}
-foreach ($element as $item){
-    echo $item;
-}
+$count= 7;
+$totalPage = ceil($count/5);
+echo $totalPage;
 
 ?>

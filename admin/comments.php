@@ -1,5 +1,5 @@
 <?php include "includes/admin_header.php" ?>
-<?php include_once "../includes/functions.php" ?>
+<?php include_once "../includes/functions_mysqli.php" ?>
 
     <div id="wrapper">
 

@@ -1,4 +1,6 @@
-<?php include_once "functions.php" ?>
+<?php include_once "includes/db_pdo.php" ?>
+<?php include_once "includes/functions_mysqli.php" ?>
+<?php include_once "includes/functions_pdo.php" ?>
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -16,8 +18,8 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <?php
-                $categoryList = getCategoryList();
-                while($category = $categoryList->fetch_assoc()){
+                $categoryList = getCategoryListPdo($pdo);
+                foreach($categoryList as $category){
                     $cat_id = $category['cat_id'];
                     $cat_title = $category['cat_title'];
                     echo "

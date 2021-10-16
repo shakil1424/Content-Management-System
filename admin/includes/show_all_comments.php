@@ -1,4 +1,7 @@
-<?php include_once "../includes/functions.php" ?>
+<?php include_once "../includes/functions_mysqli.php" ?>
+<?php include_once "../includes/db.php" ?>
+<?php include_once "../includes/db_pdo.php" ?>
+<?php include_once "../includes/functions_pdo.php" ?>
 <table class="table table-bordered text-center">
     <thead>
     <tr>
@@ -18,13 +21,13 @@
     <tbody>
     <?php
     $status = "Disapproved";
-    $commentList = getCommentList();
-    $count = mysqli_num_rows($commentList);
+    $commentList = getCommentListPdo($pdo);
+    $count = count($commentList);
     if ($count == 0) {
-        echo "NO Comment AVAILABLE";
+        echo "NO Comment Available";
 
     } else {
-        while ($comment = $commentList->fetch_assoc()) {
+        foreach ($commentList as $comment) {
             $comment_id = $comment['comment_id'];
             $comment_content = $comment['comment_content'];
             $comment_author = $comment['comment_author'];
@@ -63,17 +66,17 @@
     if (isset($_GET['delete'])) {
         $comment_post_id = $_GET['comment_post_id'];
         $comment_id = $_GET['delete'];
-        deleteComment($comment_id);
-        changePostCommentCount($comment_post_id,-1);
+        deleteCommentPdo($comment_id,$pdo);
+        changePostCommentCountPdo($comment_post_id,-1,$pdo);
         header("Location: comments.php");
     }
     if (isset($_GET['comment_status'])) {
         $comment_id = $_GET['comment_id'];
         $comment_status = $_GET['comment_status'];
         if($comment_status ==1){
-            UpdateComment($comment_id,0);
+            UpdateCommentPdo($comment_id,0,$pdo);
         }else{
-            UpdateComment($comment_id,1);
+            UpdateCommentPdo($comment_id,1,$pdo);
         }
 
         header("Location: comments.php");
